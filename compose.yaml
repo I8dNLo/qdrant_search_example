@@ -20,14 +20,14 @@ services:
     networks:
       - qdrant_network
 
-#  fill:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile_fill
-#    depends_on:
-#      - qdrant
-#    networks:
-#      - qdrant_network
+  fill:
+    build:
+      context: .
+      dockerfile: Dockerfile_fill
+    depends_on:
+      - qdrant
+    networks:
+      - qdrant_network
 
   frontend:
     build:
