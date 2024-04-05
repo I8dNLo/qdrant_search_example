@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    configs:
+      - source: qdrant_config
+        target: /qdrant/config/production.yaml
+    volumes:
+      - ./qdrant_data:/qdrant_data
+
+  fill_database:
+    build:
+      context: .
+      dockerfile: Dockerfile_filldb
+    depends_on:
+      - qdrant
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile_frontend
+    depends_on:
+      - qdrant
+
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO
