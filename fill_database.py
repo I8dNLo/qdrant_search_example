@@ -4,7 +4,7 @@ from PIL import Image
 from qdrant_client import QdrantClient, models
 from qdrant_client.http.exceptions import UnexpectedResponse
 from transformers import CLIPModel, CLIPProcessor
-
+from tqdm import trange
 # Constants
 IMAGE_BASE_FOLDERS = ["./0", "./1/"]
 BATCH_SIZE = 64
@@ -56,10 +56,10 @@ def main():
         os.path.join(folder, image)
         for folder in IMAGE_BASE_FOLDERS
         for image in os.listdir(folder)
-    ][:100000]
+    ]
 
     # Process images in batches
-    for batch_start in range(0, len(file_paths), BATCH_SIZE):
+    for batch_start in trange(0, len(file_paths), BATCH_SIZE):
         batch_end = min(batch_start + BATCH_SIZE, len(file_paths))
         batch_paths = file_paths[batch_start:batch_end]
         batch_images = [Image.open(path) for path in batch_paths]

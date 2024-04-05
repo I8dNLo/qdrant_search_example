@@ -1,7 +1,3 @@
-# This demo needs to be run from the repo folder.
-# python demo/fake_gan/run.py
-import random
-
 import gradio as gr
 from qdrant_client import QdrantClient
 from transformers import CLIPModel, CLIPProcessor
@@ -62,5 +58,3 @@ def boot():
 if __name__ == "__main__":
     boot()
     demo.launch()
-print("Pupa")
-import numpy as np

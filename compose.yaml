@@ -18,19 +18,14 @@ services:
     volumes:
       - ./qdrant_data:/qdrant_data
 
-  fill_database:
-    build:
-      context: .
-      dockerfile: Dockerfile_filldb
-    depends_on:
-      - qdrant
-
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile_frontend
+      dockerfile: Dockerfile_base
     depends_on:
       - qdrant
+    ports:
+      - 7860:7860
 
 configs:
   qdrant_config:
