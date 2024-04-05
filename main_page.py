@@ -1,6 +1,8 @@
 import gradio as gr
 from qdrant_client import QdrantClient
 from transformers import CLIPModel, CLIPProcessor
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
 
 processor = None
 model = None
@@ -46,15 +48,18 @@ with gr.Blocks() as demo:
 
 
 def boot():
+    print("Booting frontend")
     model_name = "openai/clip-vit-base-patch32"
 
     global processor, model, client
 
     processor = CLIPProcessor.from_pretrained(model_name)
     model = CLIPModel.from_pretrained(model_name)
-    client = QdrantClient(url="http://localhost:6333")
+    client = QdrantClient(url="http://qdrant:6333")
 
 
 if __name__ == "__main__":
+    print("Ready")
     boot()
+    print("Ready")
     demo.launch()

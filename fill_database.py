@@ -5,6 +5,8 @@ from qdrant_client import QdrantClient, models
 from qdrant_client.http.exceptions import UnexpectedResponse
 from transformers import CLIPModel, CLIPProcessor
 from tqdm import trange
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
 # Constants
 IMAGE_BASE_FOLDERS = ["./0", "./1/"]
 BATCH_SIZE = 64
@@ -35,7 +37,7 @@ def load_batch_to_qdrant(client, paths, batch, collection="AdsDataset", ids=None
 # Main function
 def main():
     # Initialize Qdrant client
-    client = QdrantClient(url="http://localhost:6333")
+    client = QdrantClient(url="http://qdrant:6333")
 
     # Create collection if not exists
     try:
@@ -56,7 +58,7 @@ def main():
         os.path.join(folder, image)
         for folder in IMAGE_BASE_FOLDERS
         for image in os.listdir(folder)
-    ]
+    ][:10]
 
     # Process images in batches
     for batch_start in trange(0, len(file_paths), BATCH_SIZE):

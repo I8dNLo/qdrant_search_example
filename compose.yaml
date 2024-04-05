@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   qdrant:
@@ -17,17 +17,40 @@ services:
         target: /qdrant/config/production.yaml
     volumes:
       - ./qdrant_data:/qdrant_data
+    networks:
+      - qdrant_network
+
+#  fill:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile_fill
+#    depends_on:
+#      - qdrant
+#    networks:
+#      - qdrant_network
 
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile_base
+      dockerfile: Dockerfile_frontend
     depends_on:
       - qdrant
     ports:
       - 7860:7860
+    networks:
+      - qdrant_network
+      - frontend_network
+    expose:
+      - 7860
 
 configs:
   qdrant_config:
     content: |
       log_level: INFO
+
+networks:
+  qdrant_network:
+    driver: bridge
+
+  frontend_network:
+    driver: bridge
