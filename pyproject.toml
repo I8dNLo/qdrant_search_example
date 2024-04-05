@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "qdrant-search-example"
+version = "0.1.0"
+description = ""
+authors = ["d.rudenko <dimitriyrudenk@gmail.com>"]
+readme = "README.md"
+packages = [{include = "qdrant_search_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+asyncio = "^3.4.3"
+qdrant-client = "^1.8.2"
+transformers = "^4.39.3"
+pillow = "^10.3.0"
+torch = "^2.2.2"
+gradio = "^4.25.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+isort = "^5.13.2"
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,13 @@
+FROM huggingface/transformers-cpu:4.9.1
+
+
+COPY . /app
+WORKDIR /app
+
+RUN pip install -r requirements.txt
+
+# Download data
+ADD https://storage.googleapis.com/ads-dataset/subfolder-0.zip /0/
+ADD https://storage.googleapis.com/ads-dataset/subfolder-1.zip /1/
+
+CMD ["python", "main_page.py"]
