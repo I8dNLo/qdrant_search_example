@@ -2,7 +2,10 @@ import gradio as gr
 from qdrant_client import QdrantClient
 from transformers import CLIPModel, CLIPProcessor
 import warnings
+import logging
 warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
+
+logger = logging.getLogger(__name__)
 
 processor = None
 model = None
@@ -48,7 +51,6 @@ with gr.Blocks() as demo:
 
 
 def boot():
-    print("Booting frontend")
     model_name = "openai/clip-vit-base-patch32"
 
     global processor, model, client
@@ -59,7 +61,7 @@ def boot():
 
 
 if __name__ == "__main__":
-    print("Ready")
+    logger.warning("Booting")
     boot()
-    print("Ready")
-    demo.launch()
+    logger.warning("Ready")
+    demo.launch(server_name="0.0.0.0", server_port=7860, share=True,)

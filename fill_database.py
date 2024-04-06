@@ -1,4 +1,5 @@
 import os
+import argparse
 
 from PIL import Image
 from qdrant_client import QdrantClient, models
@@ -9,7 +10,8 @@ import warnings
 warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
 # Constants
 IMAGE_BASE_FOLDERS = ["./0", "./1/"]
-BATCH_SIZE = 64
+DEFAULT_BATCH_SIZE = 32
+DEFAULT_N_SAMPLES = 10000
 
 # Initialize CLIP model and processor
 model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").eval()
@@ -35,7 +37,7 @@ def load_batch_to_qdrant(client, paths, batch, collection="AdsDataset", ids=None
 
 
 # Main function
-def main():
+def main(BATCH_SIZE, n_samples):
     # Initialize Qdrant client
     client = QdrantClient(url="http://qdrant:6333")
 
@@ -58,7 +60,7 @@ def main():
         os.path.join(folder, image)
         for folder in IMAGE_BASE_FOLDERS
         for image in os.listdir(folder)
-    ][:10]
+    ][:n_samples]
 
     # Process images in batches
     for batch_start in trange(0, len(file_paths), BATCH_SIZE):
@@ -77,4 +79,12 @@ def main():
 
 # Entry point
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Process images and load to Qdrant.')
+    parser.add_argument('--batch_size', type=int, default=DEFAULT_BATCH_SIZE,
+                        help='Batch size for processing images')
+    parser.add_argument('--n_samples', type=int, default=DEFAULT_N_SAMPLES,
+                        help='Number of samples to process')
+
+    args = parser.parse_args()
+
+    main(args.batch_size, args.n_samples)

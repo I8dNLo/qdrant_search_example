@@ -21,6 +21,7 @@ services:
       - qdrant_network
 
   fill:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile_fill
@@ -30,6 +31,7 @@ services:
       - qdrant_network
 
   frontend:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile_frontend
@@ -40,8 +42,6 @@ services:
     networks:
       - qdrant_network
       - frontend_network
-    expose:
-      - 7860
 
 configs:
   qdrant_config:
