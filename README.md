@@ -8,7 +8,7 @@ To get started with the Advertisement Image Dataset Search Tool, follow these st
 Clone the repository to your local machine:
 
 ```
-git clone https://github.com/your/repository.git
+https://github.com/I8dNLo/qdrant_search_example.git
 ```
 Navigate to the project directory:
 
@@ -53,6 +53,8 @@ This project is licensed under the MIT License.
 [Docker](https://www.docker.com/) for containerization technology.
 
 [GitHub](https://github.com/) for hosting the repository.
+
+Follow [Pseudolabeling](https://t.me/pseudolabeling/) if you found this repo useful
 
 **Support**
 
