@@ -12,4 +12,4 @@ ADD https://storage.googleapis.com/ads-dataset/subfolder-1.zip ./
 RUN unzip subfolder-0.zip
 RUN unzip subfolder-1.zip
 
-CMD ["sh", "-c", "python main_page.py"]
+#CMD ["sh", "-c", "python main_page.py"]

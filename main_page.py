@@ -1,23 +1,34 @@
+import logging
+import warnings
+import os
 import gradio as gr
 from qdrant_client import QdrantClient
 from transformers import CLIPModel, CLIPProcessor
-import warnings
-import logging
-warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
+
+warnings.filterwarnings(
+    "ignore", category=UserWarning, message="TypedStorage is deprecated"
+)
 
 logger = logging.getLogger(__name__)
 
+def_model = os.getenv("MODEL_NAME")
+qdrant_port = os.getenv("QDRANT_PORT")
+qdrant_host = os.getenv("QDRANT_HOST")
+collection_name = os.getenv("COLLECTION_NAME")
+
+server_name = "0.0.0.0"
+server_port = 7860
 processor = None
 model = None
 client = None
 
 
-def fake_gan(input_str):
+def search_by_query(input_str: str):
     processed_input = processor(text=input_str, return_tensors="pt")
     query = model.get_text_features(**processed_input)
     query = query.detach().tolist()[0]
     res = client.search(
-        collection_name="AdsDataset",
+        collection_name=collection_name,
         query_vector=query,
         with_vectors=True,
         with_payload=True,
@@ -47,21 +58,21 @@ with gr.Blocks() as demo:
         # render=False,
         interactive=False,
     )
-    btn.click(fake_gan, inputs=textbox, outputs=gallery)
+    btn.click(search_by_query, inputs=textbox, outputs=gallery)
 
 
-def boot():
-    model_name = "openai/clip-vit-base-patch32"
-
+def boot(model_name: str = def_model):
     global processor, model, client
 
     processor = CLIPProcessor.from_pretrained(model_name)
     model = CLIPModel.from_pretrained(model_name)
-    client = QdrantClient(url="http://qdrant:6333")
+    client = QdrantClient(url=f"http://{qdrant_host}:{qdrant_port}")
 
 
 if __name__ == "__main__":
-    logger.warning("Booting")
     boot()
-    logger.warning("Ready")
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=True,)
+    demo.launch(
+        server_name=server_name,
+        server_port=server_port,
+        share=True,
+    )

@@ -24,17 +24,26 @@ services:
     platform: linux/amd64
     build:
       context: .
-      dockerfile: Dockerfile_fill
+      dockerfile: Dockerfile_base
+    command: >
+      sh -c "python fill_database.py"
     depends_on:
       - qdrant
     networks:
       - qdrant_network
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_PORT=${QDRANT_PORT}
+      - COLLECTION_NAME=${COLLECTION_NAME}
 
   frontend:
     platform: linux/amd64
     build:
       context: .
-      dockerfile: Dockerfile_frontend
+      dockerfile: Dockerfile_base
+    command: >
+      sh -c "python main_page.py"
     depends_on:
       - qdrant
     ports:
@@ -42,6 +51,11 @@ services:
     networks:
       - qdrant_network
       - frontend_network
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_PORT=${QDRANT_PORT}
+      - COLLECTION_NAME=${COLLECTION_NAME}
 
 configs:
   qdrant_config:

@@ -1,21 +1,28 @@
-import os
 import argparse
+import os
+import warnings
 
 from PIL import Image
 from qdrant_client import QdrantClient, models
 from qdrant_client.http.exceptions import UnexpectedResponse
-from transformers import CLIPModel, CLIPProcessor
 from tqdm import trange
-import warnings
-warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
+from transformers import CLIPModel, CLIPProcessor
+
+warnings.filterwarnings(
+    "ignore", category=UserWarning, message="TypedStorage is deprecated"
+)
 # Constants
 IMAGE_BASE_FOLDERS = ["./0", "./1/"]
 DEFAULT_BATCH_SIZE = 32
 DEFAULT_N_SAMPLES = 10000
+collection_name = os.getenv("COLLECTION_NAME") #"AdsDataset"
+qdrant_port = os.getenv("QDRANT_PORT") #6333
+qdrant_host = os.getenv("QDRANT_HOST") #qdrant
+model_name = os.getenv("MODEL_NAME") #"openai/clip-vit-base-patch32"
 
 # Initialize CLIP model and processor
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").eval()
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+model = CLIPModel.from_pretrained(model_name).eval()
+processor = CLIPProcessor.from_pretrained(model_name)
 
 
 # Function to get image embeddings
@@ -27,7 +34,7 @@ def get_image_embedding(path):
 
 
 # Function to load batch to Qdrant
-def load_batch_to_qdrant(client, paths, batch, collection="AdsDataset", ids=None):
+def load_batch_to_qdrant(client, paths, batch, collection=collection_name, ids=None):
     client.upsert(
         collection_name=collection,
         points=models.Batch(
@@ -39,12 +46,12 @@ def load_batch_to_qdrant(client, paths, batch, collection="AdsDataset", ids=None
 # Main function
 def main(BATCH_SIZE, n_samples):
     # Initialize Qdrant client
-    client = QdrantClient(url="http://qdrant:6333")
+    client = QdrantClient(url=f"http://{qdrant_host}:{qdrant_port}")
 
     # Create collection if not exists
     try:
         client.create_collection(
-            collection_name="AdsDataset",
+            collection_name=collection_name,
             vectors_config=models.VectorParams(
                 size=512, distance=models.Distance.COSINE
             ),
@@ -79,11 +86,19 @@ def main(BATCH_SIZE, n_samples):
 
 # Entry point
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process images and load to Qdrant.')
-    parser.add_argument('--batch_size', type=int, default=DEFAULT_BATCH_SIZE,
-                        help='Batch size for processing images')
-    parser.add_argument('--n_samples', type=int, default=DEFAULT_N_SAMPLES,
-                        help='Number of samples to process')
+    parser = argparse.ArgumentParser(description="Process images and load to Qdrant.")
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=DEFAULT_BATCH_SIZE,
+        help="Batch size for processing images",
+    )
+    parser.add_argument(
+        "--n_samples",
+        type=int,
+        default=DEFAULT_N_SAMPLES,
+        help="Number of samples to process",
+    )
 
     args = parser.parse_args()
 
