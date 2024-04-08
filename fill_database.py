@@ -1,7 +1,7 @@
 import argparse
 import os
 import warnings
-
+import torch
 from PIL import Image
 from qdrant_client import QdrantClient, models
 from qdrant_client.http.exceptions import UnexpectedResponse
@@ -22,11 +22,12 @@ model_name = os.getenv("MODEL_NAME") #"openai/clip-vit-base-patch32"
 
 # Initialize CLIP model and processor
 model = CLIPModel.from_pretrained(model_name).eval()
+model = torch.compile(model)
 processor = CLIPProcessor.from_pretrained(model_name)
 
 
 # Function to get image embeddings
-def get_image_embedding(path):
+def get_image_embedding(path: str):
     image = Image.open(path)
     inputs = processor(images=image, return_tensors="pt")
     outputs = model.get_image_features(**inputs)
@@ -34,17 +35,23 @@ def get_image_embedding(path):
 
 
 # Function to load batch to Qdrant
-def load_batch_to_qdrant(client, paths, batch, collection=collection_name, ids=None):
+def load_batch_to_qdrant(client: QdrantClient,
+                         paths: list[str],
+                         batch: list[list[float]],
+                         collection : str = collection_name,
+                         ids: list[int] = None):
     client.upsert(
         collection_name=collection,
         points=models.Batch(
-            payloads=[{"path": path} for path in paths], vectors=batch, ids=ids
+            payloads=[{"path": path} for path in paths],
+            vectors=batch,
+            ids=ids
         ),
     )
 
 
 # Main function
-def main(BATCH_SIZE, n_samples):
+def main(BATCH_SIZE: int, n_samples: int):
     # Initialize Qdrant client
     client = QdrantClient(url=f"http://{qdrant_host}:{qdrant_port}")
 

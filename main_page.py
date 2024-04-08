@@ -3,6 +3,7 @@ import warnings
 import os
 import gradio as gr
 from qdrant_client import QdrantClient
+import torch
 from transformers import CLIPModel, CLIPProcessor
 
 warnings.filterwarnings(
@@ -16,8 +17,9 @@ qdrant_port = os.getenv("QDRANT_PORT")
 qdrant_host = os.getenv("QDRANT_HOST")
 collection_name = os.getenv("COLLECTION_NAME")
 
-server_name = "0.0.0.0"
-server_port = 7860
+frontend_name = os.getenv("FRONTEND_HOST") #"0.0.0.0"
+frontend_port = os.getenv("FRONTEND_PORT") #7860
+
 processor = None
 model = None
 client = None
@@ -30,7 +32,7 @@ def search_by_query(input_str: str):
     res = client.search(
         collection_name=collection_name,
         query_vector=query,
-        with_vectors=True,
+        with_vectors=False,
         with_payload=True,
     )
 
@@ -66,13 +68,16 @@ def boot(model_name: str = def_model):
 
     processor = CLIPProcessor.from_pretrained(model_name)
     model = CLIPModel.from_pretrained(model_name)
+    model = torch.compile(model)
     client = QdrantClient(url=f"http://{qdrant_host}:{qdrant_port}")
 
 
 if __name__ == "__main__":
     boot()
+    print(frontend_name)
+    print(frontend_port)
     demo.launch(
-        server_name=server_name,
-        server_port=server_port,
+        server_name=frontend_name,
+        server_port=frontend_port,
         share=True,
     )
