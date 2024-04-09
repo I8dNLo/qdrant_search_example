@@ -1,13 +1,15 @@
-search:
-  BATCH_SIZE: 32
-  model_name: openai/clip-vit-base-patch32
-  qdrant_host: qdrant
-  qdrant_port: 6333
-  collection_name: DEFAULT_COLLECTION
-  server_name: 0.0.0.0
-  server_port: 7860
+#service specific config
+model_name: openai/clip-vit-base-patch32
+qdrant_host: qdrant
+qdrant_port: 6333
+collection_name: DEFAULT_COLLECTION
 
+#searcher specific fields
+server_name: 0.0.0.0
+server_port: 7860
 
+#filler specific fields
+BATCH_SIZE: 32
 
 hydra:
   job:

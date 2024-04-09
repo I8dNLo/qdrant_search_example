@@ -1,10 +1,12 @@
 import logging
 import warnings
+from itertools import islice
+
 import gradio as gr
+import torch
+from hydra_zen import ZenStore, builds, zen
 from qdrant_client import QdrantClient
 from transformers import CLIPModel, CLIPProcessor
-from hydra_zen import zen, builds, ZenStore
-from itertools import islice
 
 warnings.filterwarnings(
     "ignore", category=UserWarning, message="TypedStorage is deprecated"
@@ -12,10 +14,21 @@ warnings.filterwarnings(
 
 logger = logging.getLogger(__name__)
 
-class Processor:
-    def __init__(self, model_name: str, qdrant_host: str, qdrant_port: int, res_len: int = 6, collection_name: str = None):
+
+class Searcher:
+    def __init__(
+        self,
+        model_name: str,
+        qdrant_host: str,
+        qdrant_port: int,
+        res_len: int = 6,
+        collection_name: str = None,
+        compile=True,
+    ):
         self.processor = CLIPProcessor.from_pretrained(model_name)
         self.model = CLIPModel.from_pretrained(model_name)
+        if compile:
+            self.model = torch.compile(self.model)
         self.db_client = QdrantClient(url=f"http://{qdrant_host}:{qdrant_port}")
         self.res_len = res_len
         self.collection_name = collection_name
@@ -32,13 +45,17 @@ class Processor:
         return [elem.payload["path"] for elem in islice(res, self.res_len)]
 
 
-def main(server_name: str = "0.0.0.0",
-         server_port: int = 7860,
-         model_name: str = "openai/clip-vit-base-patch32",
-         qdrant_host: str = "qdrant",
-         qdrant_port: int = 6333,
-         collection_name: str = "DEFAULT_COLLECTION"):
-    processor = Processor(model_name, qdrant_host, qdrant_port, collection_name=collection_name)
+def main(
+    server_name: str = "0.0.0.0",
+    server_port: int = 7860,
+    model_name: str = "openai/clip-vit-base-patch32",
+    qdrant_host: str = "qdrant",
+    qdrant_port: int = 6333,
+    collection_name: str = "DEFAULT_COLLECTION",
+):
+    processor = Searcher(
+        model_name, qdrant_host, qdrant_port, collection_name=collection_name
+    )
     with gr.Blocks() as demo:
         textbox = gr.Textbox(
             label="Search through the Advertisement Image Dataset",
@@ -74,7 +91,8 @@ store = ZenStore()
 store(MainConfig, name="search")
 if __name__ == "__main__":
     store.add_to_hydra_store()
-    zen(main).hydra_main(config_name="search",
-                         version_base="1.1",
-                         config_path="./config",
-                         )
+    zen(main).hydra_main(
+        config_name="config",
+        version_base="1.1",
+        config_path="./config/",
+    )
