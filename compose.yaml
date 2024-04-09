@@ -31,11 +31,6 @@ services:
       - qdrant
     networks:
       - qdrant_network
-    environment:
-      - MODEL_NAME=${MODEL_NAME}
-      - QDRANT_HOST=${QDRANT_HOST}
-      - QDRANT_PORT=${QDRANT_PORT}
-      - COLLECTION_NAME=${COLLECTION_NAME}
 
   frontend:
     platform: linux/amd64
@@ -51,13 +46,6 @@ services:
     networks:
       - qdrant_network
       - frontend_network
-    environment:
-      - MODEL_NAME=${MODEL_NAME}
-      - QDRANT_HOST=${QDRANT_HOST}
-      - QDRANT_PORT=${QDRANT_PORT}
-      - COLLECTION_NAME=${COLLECTION_NAME}
-      - FRONTEND_HOST=${FRONTEND_HOST}
-      - FRONTEND_PORT=${FRONTEND_PORT}
 
 configs:
   qdrant_config:
