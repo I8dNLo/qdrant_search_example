@@ -42,9 +42,9 @@ def main(server_name: str = "0.0.0.0",
     with gr.Blocks() as demo:
         textbox = gr.Textbox(
             label="Search through the Advertisement Image Dataset",
-            info="Text promt",
+            info="Text prompt",
             lines=1,
-            value="Pizza",
+            value="Burger",
             render=True,
             interactive=True,
         )

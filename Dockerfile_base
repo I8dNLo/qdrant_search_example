@@ -1,10 +1,37 @@
 FROM cnstark/pytorch:2.0.1-py3.10.11-ubuntu22.04
 
-COPY . /app
-WORKDIR /app
 RUN apt update
 RUN apt install unzip
-RUN pip install -r requirements.txt
+RUN apt-get -y install curl
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_NO_INTERACTION=1 \
+    PYSETUP_PATH="/opt/pysetup" \
+    VENV_PATH="/opt/pysetup/.venv"
+
+ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH" \
+    POETRY_VERSION=1.4.2
+
+RUN mkdir "$HOME/opt/"
+
+RUN curl -sSL https://install.python-poetry.org > /tmp/get-poetry.py
+RUN python3 /tmp/get-poetry.py \
+    && poetry config virtualenvs.create false \
+    && mkdir -p /cache/poetry \
+    && poetry config cache-dir /cache/poetry \
+    && python -m pip install --upgrade pip wheel setuptools
+
+
+COPY . /app
+WORKDIR /app
+
+ARG INSTALLER_PARALLEL=true
+RUN poetry config installer.parallel $INSTALLER_PARALLEL
+RUN poetry install --no-root --without dev
 
 # Download data
 ADD https://storage.googleapis.com/ads-dataset/subfolder-0.zip ./

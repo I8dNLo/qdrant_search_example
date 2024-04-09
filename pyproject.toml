@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "qdrant-search-example"
+version = "0.1.0"
+description = ""
+authors = ["d.rudenko <dimitriyrudenk@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+gradio-client="0.15.0"
+gradio="4.25.0"
+qdrant-client="1.8.2"
+transformers="4.39.3"
+hydra_zen="0.12.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
