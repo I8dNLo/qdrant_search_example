@@ -65,3 +65,18 @@ Follow [Pseudolabeling](https://t.me/pseudolabeling/) if you found this repo use
 If you encounter any issues or have any questions, feel free to open an issue on the GitHub repository. We're here to help!
 
 Enjoy using the Advertisement Image Dataset Search Tool! 🚀
+
+## Example queries to try
+Queries with good results:
+1. "Coffee"
+2. "Burger"
+3. "Pizza"
+4. ...
+5. Literally anything which can me agressively and straight-forwardly advertized
+
+Queries with bad results:
+1. "Black cat"
+2. "Starship"
+3. "Coffin"
+4. Or any other non-popular image for advertisment 
+   
