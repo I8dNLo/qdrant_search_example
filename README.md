@@ -81,5 +81,7 @@ Queries with bad results:
 1. "Black cat"
 2. "Starship"
 3. "Coffin"
-4. Or any other non-popular image for advertisment 
+4. Or any other non-popular image for advertisement
+
+Some outputs also can be found in [Data_exploration & quality measurment.ipynb notebook](https://github.com/I8dNLo/qdrant_search_example/blob/main/Data_exploration%20%26%20quality%20measurment.ipynb)
    
