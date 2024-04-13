@@ -66,6 +66,9 @@ If you encounter any issues or have any questions, feel free to open an issue on
 
 Enjoy using the Advertisement Image Dataset Search Tool! 🚀
 
+## Dataset EDA
+Dataset EDA can be found in [Data_exploration & quality measurment.ipynb notebook](https://github.com/I8dNLo/qdrant_search_example/blob/main/Data_exploration%20%26%20quality%20measurment.ipynb)
+
 ## Example queries to try
 Queries with good results:
 1. "Coffee"
