@@ -12,6 +12,7 @@ gradio="4.25.0"
 qdrant-client="1.8.2"
 transformers="4.39.3"
 hydra_zen="0.12.1"
+sympy = "^1.12"
 
 [build-system]
 requires = ["poetry-core"]
